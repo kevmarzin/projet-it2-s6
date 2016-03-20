@@ -479,10 +479,36 @@ Automate * mot_to_automate( const char * mot ){
 	return automate;
 }
 
+void action_ajout_initiaux_union ( const intptr_t element, void* data ){
+	ajouter_etat_initial (data, element);
+}
+
+void action_ajout_finaux_union ( const intptr_t element, void* data ){
+	ajouter_etat_final (data, element);
+}
+
+void action_ajout_transitions_union ( int origine, char lettre, int fin, void* data ){
+	ajouter_transition (data, origine, lettre, fin);
+}
+
 Automate * creer_union_des_automates(
 	const Automate * automate_1, const Automate * automate_2
 ){
-	A_FAIRE_RETURN( NULL );
+	// Renommage des sommet de l'automate_2 pour qu'il n'est pas les mêmes noms que ceux de l'automate_1
+	Automate * automate_2_bis = translater_automate(automate_2, automate_1);
+	
+	// ajout des états et des transitions de l'automate_1 à celui de l'union
+	Automate * automate_union = copier_automate (automate_1);
+	
+	// Ajout à l'automate de l'union des états finaux et initiaux de l'automate_2 
+	pour_tout_element (get_initiaux (automate_2_bis), action_ajout_initiaux_union, automate_union);
+	pour_tout_element (get_finaux (automate_2_bis), action_ajout_finaux_union, automate_union);
+	
+	// ajout des transitions de l'automate_2 à l'automate de l'union, ainsi que les états de 2 qui n'ont
+	// pas encore été ajouté
+	pour_toute_transition (automate_2_bis, action_ajout_transitions_union, automate_union);
+	
+	return automate_union;
 }
 
 Ensemble* etats_accessibles( const Automate * automate, int etat ){
@@ -581,7 +607,54 @@ Automate * creer_automate_du_melange(
 	A_FAIRE_RETURN( NULL ); 
 }
 
-Automate * creer_automate_deterministe( const Automate* automate ){
-	A_FAIRE_RETURN( NULL );
+int my_comparer_ensemble (intptr_t el1, intptr_t el2){
+	return comparer_ensemble( (Ensemble*) el1, (Ensemble*) el2 );
 }
 
+Automate * creer_automate_deterministe( const Automate* automate ){
+	int cpt = 0;
+	int etat_dest;
+	
+	Table* nouvs_etats = creer_table(my_comparer_ensemble, NULL, NULL);
+	add_table( nouvs_etats, (intptr_t) get_initiaux (automate), cpt);
+	
+	Automate* aut = creer_automate();
+	ajouter_etat_initial (aut, cpt);
+	
+	Table_iterateur it_etat = premier_iterateur_table ( nouvs_etats );
+	Ensemble_iterateur it_alphabet;
+	
+	while (!iterateur_est_vide (it_etat)) {
+		
+		it_alphabet = premier_iterateur_ensemble (get_alphabet (automate));
+		while ( !iterateur_ensemble_est_vide (it_alphabet)){
+			char lettre = get_element (it_alphabet);
+			
+			Ensemble* dest = delta (automate, (Ensemble*) get_cle (it_etat), lettre);
+			
+			if (taille_ensemble (dest) > 0){
+				Table_iterateur it = trouver_table( nouvs_etats, (intptr_t) dest );
+				if( iterateur_est_vide( it ) ){
+					add_table( automate->transitions, (intptr_t) dest, (etat_dest = ++cpt) );
+				}else{
+					etat_dest = get_valeur( it );
+				}
+					
+				ajouter_transition (aut, get_valeur (it_etat), lettre, etat_dest);
+			}
+			
+			it_alphabet = iterateur_suivant_ensemble (it_alphabet);
+		}
+		
+		Ensemble* contient_finaux = creer_intersection_ensemble ( (Ensemble*) get_cle (it_etat), get_finaux (automate));
+		if (taille_ensemble (contient_finaux) > 0)
+			ajouter_etat_final (aut, get_valeur (it_etat));
+		liberer_ensemble (contient_finaux);
+		
+		// Etat suivant
+		it_etat = iterateur_suivant_table (it_etat);
+	}
+	
+	liberer_table (nouvs_etats);
+	return aut;
+}
