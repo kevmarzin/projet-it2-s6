@@ -22,7 +22,7 @@
 #include "automate.h"
 #include "outils.h"
 
-int test_automate_accessible(){
+int test_automate_miroir(){
 	int result = 1;
 
 	{
@@ -60,7 +60,7 @@ int test_automate_accessible(){
 
 int main(){
 
-	if( ! test_automate_accessible() ){ return 1; };
+	if( ! test_automate_miroir() ){ return 1; };
 
 	return 0;
 	
