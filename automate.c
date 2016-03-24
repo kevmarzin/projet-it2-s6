@@ -605,9 +605,135 @@ Automate *miroir( const Automate * automate){
 	A_FAIRE_RETURN( NULL ); 
 }
 
+struct My_couple_t { int aut1; int aut2; };   // On définit le couple
+
+typedef struct My_couple_t* My_couple;
+
+int my_comparer_couple( const intptr_t c1, const intptr_t c2 ){
+	if( ((My_couple) c1)->aut1 == ((My_couple) c2)->aut1 ) return ((My_couple) c1)->aut2 - ((My_couple) c2)->aut2;
+	return ((My_couple) c1)->aut1 - ((My_couple) c2)->aut1;
+}
+ 
+intptr_t my_copier_couple( const intptr_t c ){
+	My_couple res = malloc( sizeof(My_couple) );
+	res->aut1 = ((My_couple) c)->aut1;
+	res->aut2 = ((My_couple) c)->aut2;
+	return (intptr_t) res;
+}
+ 
+void my_supprimer_couple( intptr_t c ){
+	free( ((My_couple)c) );
+}
+
+void ajouter_transitions_melange (
+	int num_automate,
+	Table* nouv_etats,
+	const Automate* automate_1,
+	const Automate* automate_2,
+	Table_iterateur it_nouv_etats,
+	char lettre, 
+	int id_etat,
+	Automate* mela
+){
+	
+	Automate* automate;
+	
+	int etat_src;
+	if (num_automate == 1){ // automate_1
+		etat_src = ((My_couple) get_cle (it_nouv_etats))->aut1;
+		automate = copier_automate (automate_1);
+	}
+	else{ // automate_2
+		etat_src = ((My_couple) get_cle (it_nouv_etats))->aut2;
+		automate = copier_automate (automate_2);
+	}
+	
+	Ensemble* dest = delta1 (automate, etat_src, lettre);
+	liberer_automate (automate);
+	Ensemble_iterateur it_dest = premier_iterateur_ensemble (dest);
+	while(!iterateur_ensemble_est_vide (it_dest)){
+		My_couple c = malloc (sizeof (*c));
+		if (num_automate == 1){ // automate_1
+			c->aut1 = get_element (it_dest);
+			c->aut2 = ((My_couple) get_element (it_nouv_etats))->aut2;
+		}
+		else{ // automate_2
+			c->aut1 = ((My_couple) get_element (it_nouv_etats))->aut1;
+			c->aut2 = get_element (it_dest);
+		}
+		
+		if (iterateur_est_vide (trouver_table (nouv_etats, (intptr_t) c))){
+			if (est_dans_l_ensemble (get_finaux (automate_1), c->aut1) && est_dans_l_ensemble (get_finaux (automate_2), c->aut2))
+				ajouter_etat_final (mela, id_etat);
+			else
+				ajouter_etat (mela, id_etat);
+			add_table (nouv_etats, (intptr_t) c, id_etat);
+		}
+		
+		ajouter_transition (mela, get_valeur (it_nouv_etats), lettre, id_etat);
+			
+		it_dest = iterateur_suivant_ensemble (it_dest);
+	}
+	liberer_ensemble (dest);
+}
+			
 Automate * creer_automate_du_melange(
 	const Automate* automate_1,  const Automate* automate_2
 ){
-	A_FAIRE_RETURN( NULL ); 
+	Automate* mela = creer_automate();
+	Table* nouv_etats = creer_table(
+		my_comparer_couple, 
+		my_copier_couple, 
+		my_supprimer_couple
+	);
+	
+	const Ensemble* initiaux_aut_1 = get_initiaux (automate_1);
+	const Ensemble* initiaux_aut_2 = get_initiaux (automate_2);
+	
+	Ensemble_iterateur it_initiaux_1 = premier_iterateur_ensemble (initiaux_aut_1);
+	Ensemble_iterateur it_initiaux_2;
+	
+	int id_etat = 0;
+	
+	while (!iterateur_ensemble_est_vide (it_initiaux_1)) {
+		it_initiaux_2 = premier_iterateur_ensemble (initiaux_aut_2);
+		
+		while (!iterateur_ensemble_est_vide (it_initiaux_2)) {
+			My_couple c = malloc (sizeof (*c));
+			c->aut1 = get_element (it_initiaux_1);
+			c->aut2 = get_element (it_initiaux_2);
+			
+			ajouter_etat_initial (mela, id_etat);
+			
+			add_table (nouv_etats, (intptr_t) c, id_etat++ );
+			
+			it_initiaux_2 = iterateur_suivant_ensemble (it_initiaux_2);
+		}
+		
+		it_initiaux_1 = iterateur_suivant_ensemble (it_initiaux_1);
+	}
+	
+	Table_iterateur it_nouv_etats = premier_iterateur_table (nouv_etats);
+	Ensemble* nouv_alphabet = copier_ensemble(get_alphabet (automate_1));
+	ajouter_elements (nouv_alphabet, get_alphabet (automate_2));
+	Ensemble_iterateur it_alphabet;
+	
+	while (!iterateur_est_vide (it_nouv_etats)){
+		it_alphabet = premier_iterateur_ensemble (nouv_alphabet);
+		while (!iterateur_ensemble_est_vide (it_alphabet)) {
+			ajouter_transitions_melange (1, nouv_etats, automate_1, automate_2, it_nouv_etats, 
+											get_element (it_alphabet), id_etat++, mela);
+			ajouter_transitions_melange (2, nouv_etats, automate_1, automate_2, it_nouv_etats, 
+											get_element (it_alphabet), id_etat++, mela);
+			it_alphabet = iterateur_suivant_ensemble (it_alphabet);
+		}
+		
+		it_nouv_etats = iterateur_suivant_table (it_nouv_etats);
+	}
+	
+	liberer_ensemble (nouv_alphabet);
+	liberer_table (nouv_etats);
+	
+	return mela;
 }
 
