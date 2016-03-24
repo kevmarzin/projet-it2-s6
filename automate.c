@@ -602,7 +602,32 @@ Automate *miroir( const Automate * automate){
 	 *		- Inverser le sens des transitions ;
 	 * 		- Échanger les états initiaux et les états finals ;
 	 */
-	A_FAIRE_RETURN( NULL ); 
+
+  Automate * res = creer_automate();
+  res->etats = copier_ensemble (get_etats (automate));
+  res->initiaux = copier_ensemble (get_finaux (automate));
+  res->finaux = copier_ensemble (get_initiaux (automate));
+
+  Table_iterateur it;
+  for(
+      	it = premier_iterateur_table( automate->transitions );
+	! iterateur_est_vide( it );
+        it = iterateur_suivant_table( it )
+     ){
+    Table_iterateur it2;
+    	Cle * cle = (Cle*) get_cle( it );
+       	Ensemble * fins = (Ensemble*) get_valeur( it );
+	for(
+       	        it2 = premier_iterateur_ensemble( fins );
+       		! iterateur_ensemble_est_vide( it2 );
+       		it2 = iterateur_suivant_ensemble( it2 )
+       	){
+	  int fin = get_element( it2 );
+	  ajouter_transition( res, fin, cle->lettre, cle->origine );
+      }
+  }
+	
+  return res;
 }
 
 Automate * creer_automate_du_melange(
