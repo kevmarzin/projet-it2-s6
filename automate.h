@@ -37,7 +37,7 @@
  */
 
 struct Automate {
-	Ensemble * vide; //!<
+   Ensemble * vide; //!<
 	Ensemble * etats;
 	Ensemble * alphabet;
 	Table* transitions;
@@ -200,7 +200,7 @@ int est_un_etat_de_l_automate( const Automate* automate, int etat );
 int est_un_etat_initial_de_l_automate( const Automate* automate, int etat );
 
 /**
- * @brief @todo Renvoie 1 si ('etat') est un état final initial de l'automate et 0 sinon.
+ * @brief Renvoie 1 si ('etat') est un état final initial de l'automate et 0 sinon.
  *
  * @param automate Un automate.
  * @param etat Un état.
@@ -253,7 +253,7 @@ Ensemble * delta(
 );
 
 /**
- * @brief @todo Renvoie l'ensemble des états accessibles à partir d'un ensemble 
+ * @brief Renvoie l'ensemble des états accessibles à partir d'un ensemble 
  *        d'états donné en paramètre et en lisant un mot donné en 
  *        paramètre.
  *
@@ -438,11 +438,14 @@ Automate * creer_union_des_automates(
 );
 
 /**
- * @brief @todo Renvoie l'automate déterministe.
+ * @brief @todo Renvoie l'automate miroir d'un automate.
  *
- * @param automate L'automate à déterminiser.
- * @return L'automate déterministe correspondant.
+ * Il s'agit de l'automate qui reconnaît les mots renversés du langage associé
+ * à l'automate passé en paramètre.
+ *
+ * @param automate Un automate.
+ * @return L'automate miroir.
  */ 
-Automate * creer_automate_deterministe( const Automate* automate );
+Automate *miroir( const Automate * automate);
 
 #endif

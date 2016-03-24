@@ -598,6 +598,10 @@ Automate *automate_accessible( const Automate * automate ){
 }
 
 Automate *miroir( const Automate * automate){
+	/* (Sur un site) il faut :
+	 *		- Inverser le sens des transitions ;
+	 * 		- Échanger les états initiaux et les états finals ;
+	 */
 	A_FAIRE_RETURN( NULL ); 
 }
 
@@ -607,54 +611,3 @@ Automate * creer_automate_du_melange(
 	A_FAIRE_RETURN( NULL ); 
 }
 
-int my_comparer_ensemble (intptr_t el1, intptr_t el2){
-	return comparer_ensemble( (Ensemble*) el1, (Ensemble*) el2 );
-}
-
-Automate * creer_automate_deterministe( const Automate* automate ){
-	int cpt = 0;
-	int etat_dest;
-	
-	Table* nouvs_etats = creer_table(my_comparer_ensemble, NULL, NULL);
-	add_table( nouvs_etats, (intptr_t) get_initiaux (automate), cpt);
-	
-	Automate* aut = creer_automate();
-	ajouter_etat_initial (aut, cpt);
-	
-	Table_iterateur it_etat = premier_iterateur_table ( nouvs_etats );
-	Ensemble_iterateur it_alphabet;
-	
-	while (!iterateur_est_vide (it_etat)) {
-		
-		it_alphabet = premier_iterateur_ensemble (get_alphabet (automate));
-		while ( !iterateur_ensemble_est_vide (it_alphabet)){
-			char lettre = get_element (it_alphabet);
-			
-			Ensemble* dest = delta (automate, (Ensemble*) get_cle (it_etat), lettre);
-			
-			if (taille_ensemble (dest) > 0){
-				Table_iterateur it = trouver_table( nouvs_etats, (intptr_t) dest );
-				if( iterateur_est_vide( it ) ){
-					add_table( automate->transitions, (intptr_t) dest, (etat_dest = ++cpt) );
-				}else{
-					etat_dest = get_valeur( it );
-				}
-					
-				ajouter_transition (aut, get_valeur (it_etat), lettre, etat_dest);
-			}
-			
-			it_alphabet = iterateur_suivant_ensemble (it_alphabet);
-		}
-		
-		Ensemble* contient_finaux = creer_intersection_ensemble ( (Ensemble*) get_cle (it_etat), get_finaux (automate));
-		if (taille_ensemble (contient_finaux) > 0)
-			ajouter_etat_final (aut, get_valeur (it_etat));
-		liberer_ensemble (contient_finaux);
-		
-		// Etat suivant
-		it_etat = iterateur_suivant_table (it_etat);
-	}
-	
-	liberer_table (nouvs_etats);
-	return aut;
-}

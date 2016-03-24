@@ -31,15 +31,13 @@ Objectif
 La première partie concerne l'implémentation de quelques automates et 
 algorithmes concernant les automates.
 Les fonctions à implémentées sont les suivantes :
-- est_un_etat_final_de_l_automate()
-- delta_star()
+- miroir()
 - get_max_etat()
 - etats_accessibles()
 - accessibles()
 - automate_accessible()
 - creer_automate_du_melange()
 - creer_union_des_automates()
-- creer_automate_deterministe()
 
 Le projet consiste à écrire des
 fonctions implémentant ces algorithmes en complétant le fichier automate.c 

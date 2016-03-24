@@ -162,6 +162,7 @@ Fonctions</h2></td></tr>
 <tr class="memdesc:a52e6967e32741d3ceef2687096bff542"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renvoie 1 si ('etat') est un état initial de l'automate et 0 sinon.  <a href="#a52e6967e32741d3ceef2687096bff542">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a52e6967e32741d3ceef2687096bff542"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48ecf8d873ef2aa9d861eeffd10c8af9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="automate_8h.html#a48ecf8d873ef2aa9d861eeffd10c8af9">est_un_etat_final_de_l_automate</a> (const <a class="el" href="struct_automate.html">Automate</a> *automate, int etat)</td></tr>
+<tr class="memdesc:a48ecf8d873ef2aa9d861eeffd10c8af9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renvoie 1 si ('etat') est un état final initial de l'automate et 0 sinon.  <a href="#a48ecf8d873ef2aa9d861eeffd10c8af9">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a48ecf8d873ef2aa9d861eeffd10c8af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7df68b721bd245c0c4151c1d627def28"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="automate_8h.html#a7df68b721bd245c0c4151c1d627def28">est_une_lettre_de_l_automate</a> (const <a class="el" href="struct_automate.html">Automate</a> *automate, char lettre)</td></tr>
 <tr class="memdesc:a7df68b721bd245c0c4151c1d627def28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renvoie 1 si ('etat') est une lettre de l'automate et 0 sinon.  <a href="#a7df68b721bd245c0c4151c1d627def28">Plus de détails...</a><br /></td></tr>
@@ -173,6 +174,7 @@ Fonctions</h2></td></tr>
 <tr class="memdesc:a1b836baf752a1635fe6700e61fc05a3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renvoie l'ensemble des états accéssibles à partir d'un ensemble d'états donné en paramètre et en lisant une lettre donnée en paramètre.  <a href="#a1b836baf752a1635fe6700e61fc05a3d">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a1b836baf752a1635fe6700e61fc05a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0077342dc9cb58574587705a20028f3a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_ensemble.html">Ensemble</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="automate_8h.html#a0077342dc9cb58574587705a20028f3a">delta_star</a> (const <a class="el" href="struct_automate.html">Automate</a> *automate, const <a class="el" href="struct_ensemble.html">Ensemble</a> *etats_courants, const char *mot)</td></tr>
+<tr class="memdesc:a0077342dc9cb58574587705a20028f3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renvoie l'ensemble des états accessibles à partir d'un ensemble d'états donné en paramètre et en lisant un mot donné en paramètre.  <a href="#a0077342dc9cb58574587705a20028f3a">Plus de détails...</a><br /></td></tr>
 <tr class="separator:a0077342dc9cb58574587705a20028f3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace744acdd80f15caf007df26aa8cd21c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="automate_8h.html#ace744acdd80f15caf007df26aa8cd21c">le_mot_est_reconnu</a> (const <a class="el" href="struct_automate.html">Automate</a> *automate, const char *mot)</td></tr>
 <tr class="memdesc:ace744acdd80f15caf007df26aa8cd21c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renvoie vrai si le mot passé en paramètre est reconu par l'automate passé en paramètre, et renvoie 0 sinon.  <a href="#ace744acdd80f15caf007df26aa8cd21c">Plus de détails...</a><br /></td></tr>
@@ -210,8 +212,8 @@ Fonctions</h2></td></tr>
 <tr class="separator:a1ae8376cc3780e9b3f7799205b50b681"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af50fb315a9de441920b9a6e04ea19acf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_automate.html">Automate</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="automate_8h.html#af50fb315a9de441920b9a6e04ea19acf">creer_union_des_automates</a> (const <a class="el" href="struct_automate.html">Automate</a> *automate_1, const <a class="el" href="struct_automate.html">Automate</a> *automate_2)</td></tr>
 <tr class="separator:af50fb315a9de441920b9a6e04ea19acf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8769d1d8c8c4c1986685436842a2172d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_automate.html">Automate</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="automate_8h.html#a8769d1d8c8c4c1986685436842a2172d">creer_automate_deterministe</a> (const <a class="el" href="struct_automate.html">Automate</a> *automate)</td></tr>
-<tr class="separator:a8769d1d8c8c4c1986685436842a2172d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0db214e8b395378ffff38434c9ab1132"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_automate.html">Automate</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="automate_8h.html#a0db214e8b395378ffff38434c9ab1132">miroir</a> (const <a class="el" href="struct_automate.html">Automate</a> *automate)</td></tr>
+<tr class="separator:a0db214e8b395378ffff38434c9ab1132"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Documentation des fonctions</h2>
 <a class="anchor" id="a391be5bae7c2bb67913c1dbb0a87626d"></a>
@@ -725,7 +727,8 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">A faire:</a></b></dt><dd>Renvoie 1 si ('etat') est un état final initial de l'automate et 0 sinon.</dd></dl>
+
+<p>Renvoie 1 si ('etat') est un état final initial de l'automate et 0 sinon. </p>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
     <tr><td class="paramname">automate</td><td>Un automate. </td></tr>
@@ -898,7 +901,8 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">A faire:</a></b></dt><dd>Renvoie l'ensemble des états accessibles à partir d'un ensemble d'états donné en paramètre et en lisant un mot donné en paramètre.</dd></dl>
+
+<p>Renvoie l'ensemble des états accessibles à partir d'un ensemble d'états donné en paramètre et en lisant un mot donné en paramètre. </p>
 <p>La mémoire de l'ensemble renvoyé par la fonction est laissé à la charge de l'utilisateur. L'utilisateur devra donc prendre soin de libérer la mémoire à la fin de son utilisation.</p>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
@@ -1084,7 +1088,7 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">A faire:</a></b></dt><dd>Renvoie l'état ayant le numéro le plus grand de l'automate passé en paramètre.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">A faire:</a></b></dt><dd>Renvoie l'état ayant le numéro le plus grand de l'automate passé en paramètre.</dd></dl>
 <p>Si l'automate est vide (sans état), alors il renvoie INT_MIN. (voir limits.h pour la valeur de INT_MIN).</p>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
@@ -1197,7 +1201,7 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">A faire:</a></b></dt><dd>Renvoie l'ensemble des états accessibles à partir d'un état en lisant un mot quelcquonque.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">A faire:</a></b></dt><dd>Renvoie l'ensemble des états accessibles à partir d'un état en lisant un mot quelcquonque.</dd></dl>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
     <tr><td class="paramname">automate</td><td>Un automate. </td></tr>
@@ -1224,7 +1228,7 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">A faire:</a></b></dt><dd>Renvoie l'ensemble des états accessibles à partir des états initiaux en lisant un mot quelconque.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">A faire:</a></b></dt><dd>Renvoie l'ensemble des états accessibles à partir des états initiaux en lisant un mot quelconque.</dd></dl>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
     <tr><td class="paramname">automate</td><td>Un automate. </td></tr>
@@ -1250,7 +1254,7 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">A faire:</a></b></dt><dd>Renvoie l'automate passé en paramètre dont les états non accessibles ont été supprimés.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">A faire:</a></b></dt><dd>Renvoie l'automate passé en paramètre dont les états non accessibles ont été supprimés.</dd></dl>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
     <tr><td class="paramname">automate</td><td>Un automate. </td></tr>
@@ -1286,7 +1290,7 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">A faire:</a></b></dt><dd>Crée l'automate du mélange.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">A faire:</a></b></dt><dd>Crée l'automate du mélange.</dd></dl>
 <p>Crée un nouvel automate qui reconnaît les mots w tels que w est le mélange de deux mots w1 et w2 appartenant respectivement aux langages reconnus par l'automate 1 et par l'autoamte 2 passés en paramètre.</p>
 <p>On peut définir le mélange récursivement par : melange( a.w1, b.W2 ) := a.melange( w1, b.w2 ) + b.melange( a.w1, w2 ) melange( w, epsilon ) := w melange( epsilon, w ) := w où w1, w2 et w3 sont des mots, a et b des lettres, epsilon l'epsilon transition et . la concaténation.</p>
 <dl class="params"><dt>Paramètres</dt><dd>
@@ -1351,7 +1355,7 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">A faire:</a></b></dt><dd>Crée l'union des automates.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">A faire:</a></b></dt><dd>Crée l'union des automates.</dd></dl>
 <p>Cet automate reconnaît tous les mots qui sont reconus par l'un des deux automates passés en paramètre.</p>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
@@ -1366,12 +1370,12 @@ Fonctions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8769d1d8c8c4c1986685436842a2172d"></a>
+<a class="anchor" id="a0db214e8b395378ffff38434c9ab1132"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_automate.html">Automate</a>* creer_automate_deterministe </td>
+          <td class="memname"><a class="el" href="struct_automate.html">Automate</a>* miroir </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_automate.html">Automate</a> *&#160;</td>
           <td class="paramname"><em>automate</em></td><td>)</td>
@@ -1379,16 +1383,17 @@ Fonctions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">A faire:</a></b></dt><dd>Renvoie l'automate déterministe.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">A faire:</a></b></dt><dd>Renvoie l'automate miroir d'un automate.</dd></dl>
+<p>Il s'agit de l'automate qui reconnaît les mots renversés du langage associé à l'automate passé en paramètre.</p>
 <dl class="params"><dt>Paramètres</dt><dd>
   <table class="params">
-    <tr><td class="paramname">automate</td><td>L'automate à déterminiser. </td></tr>
+    <tr><td class="paramname">automate</td><td>Un automate. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Renvoie</dt><dd>L'automate déterministe correspondant. </dd></dl>
+<dl class="section return"><dt>Renvoie</dt><dd>L'automate miroir. </dd></dl>
 
-<p>Définition à la ligne <a class="el" href="automate_8c_source.html#l00502">502</a> du fichier <a class="el" href="automate_8c_source.html">automate.c</a>.</p>
+<p>Définition à la ligne <a class="el" href="automate_8c_source.html#l00492">492</a> du fichier <a class="el" href="automate_8c_source.html">automate.c</a>.</p>
 
 </div>
 </div>
