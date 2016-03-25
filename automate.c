@@ -634,8 +634,9 @@ struct My_couple_t { int aut1; int aut2; };   // On définit le couple
 
 typedef struct My_couple_t* My_couple;
 
-int my_comparer_couple( const intptr_t c1, const intptr_t c2 ){
-	if( ((My_couple) c1)->aut1 == ((My_couple) c2)->aut1 ) return ((My_couple) c1)->aut2 - ((My_couple) c2)->aut2;
+int my_comparer_couple( const intptr_t c1, const intptr_t c2 ){ 
+	if( ((My_couple) c1)->aut1 == ((My_couple) c2)->aut1 )
+		return ((My_couple) c1)->aut2 - ((My_couple) c2)->aut2;
 	return ((My_couple) c1)->aut1 - ((My_couple) c2)->aut1;
 }
  
@@ -657,13 +658,15 @@ void ajouter_transitions_melange (
 	const Automate* automate_2,
 	Table_iterateur it_nouv_etats,
 	char lettre, 
-	int id_etat,
+	int *id_etat,
 	Automate* mela
 ){
-	
+	// Automate copie de l'automate choisie dans le bloc "if" suivant
 	Automate* automate;
 	
 	int etat_src;
+	// On défini l'état à partir duquel on va calculer les transitions
+	// celui de l'automate_1 ou celui de l'automate_2 ?
 	if (num_automate == 1){ // automate_1
 		etat_src = ((My_couple) get_cle (it_nouv_etats))->aut1;
 		automate = copier_automate (automate_1);
@@ -673,10 +676,15 @@ void ajouter_transitions_melange (
 		automate = copier_automate (automate_2);
 	}
 	
+	// On construit l'ensemble des états accessibles par l'état définie précédemment avec la lettre donnée
 	Ensemble* dest = delta1 (automate, etat_src, lettre);
 	liberer_automate (automate);
+	
+	// Parcours des automates de destination
 	Ensemble_iterateur it_dest = premier_iterateur_ensemble (dest);
 	while(!iterateur_ensemble_est_vide (it_dest)){
+		
+		// Construction des nouveaux couple en fonction de l'état src choisi précédemment
 		My_couple c = malloc (sizeof (*c));
 		if (num_automate == 1){ // automate_1
 			c->aut1 = get_element (it_dest);
@@ -687,18 +695,25 @@ void ajouter_transitions_melange (
 			c->aut2 = get_element (it_dest);
 		}
 		
+		// Si le couple n'est pas déjà associé à un sommet du mélange
 		if (iterateur_est_vide (trouver_table (nouv_etats, (intptr_t) c))){
+			// Si les deux états sont finaux l'état associé du mélange est final
 			if (est_dans_l_ensemble (get_finaux (automate_1), c->aut1) && est_dans_l_ensemble (get_finaux (automate_2), c->aut2))
-				ajouter_etat_final (mela, id_etat);
-			else
-				ajouter_etat (mela, id_etat);
-			add_table (nouv_etats, (intptr_t) c, id_etat);
+				ajouter_etat_final (mela, (*id_etat));
+			add_table (nouv_etats, (intptr_t) c, (*id_etat));
+			(*id_etat)++;
 		}
 		
-		ajouter_transition (mela, get_valeur (it_nouv_etats), lettre, id_etat);
-			
+		// Ajout de la transition à l'automate du mélanfe
+		ajouter_transition (mela,
+							get_valeur (it_nouv_etats),
+							lettre,
+							get_valeur (trouver_table (nouv_etats, (intptr_t) c)));
+		
+		// état suivant de destination
 		it_dest = iterateur_suivant_ensemble (it_dest);
 	}
+	// On libère l'ensemble des états de destination
 	liberer_ensemble (dest);
 }
 			
@@ -712,47 +727,88 @@ Automate * creer_automate_du_melange(
 		my_supprimer_couple
 	);
 	
+	// Récupération des états initiaux des deux automates
 	const Ensemble* initiaux_aut_1 = get_initiaux (automate_1);
 	const Ensemble* initiaux_aut_2 = get_initiaux (automate_2);
 	
+	// Initialisation des itérateurs pour le parcours des initiaux
 	Ensemble_iterateur it_initiaux_1 = premier_iterateur_ensemble (initiaux_aut_1);
 	Ensemble_iterateur it_initiaux_2;
 	
+	// Numéro des nouveaux états du mélange
 	int id_etat = 0;
 	
+	// On construit les couples d'états (aut1, aut2) tel que
+	// aut1 (resp. aut2) appartient à l'automate_1 (resp. automate_2)
+	// et on associe ces couples à un nouvel état du mélange
 	while (!iterateur_ensemble_est_vide (it_initiaux_1)) {
 		it_initiaux_2 = premier_iterateur_ensemble (initiaux_aut_2);
 		
 		while (!iterateur_ensemble_est_vide (it_initiaux_2)) {
+			// Construction du couple d'états
 			My_couple c = malloc (sizeof (*c));
 			c->aut1 = get_element (it_initiaux_1);
 			c->aut2 = get_element (it_initiaux_2);
 			
+			// Le nouvel état est un état initial du mélange
 			ajouter_etat_initial (mela, id_etat);
 			
-			add_table (nouv_etats, (intptr_t) c, id_etat++ );
+			// On sauvegarde l'association du couple et du nouvel état
+			add_table (nouv_etats, (intptr_t) c, id_etat );
 			
+			++id_etat;
+			
+			// état de l'automate_2 suivant
 			it_initiaux_2 = iterateur_suivant_ensemble (it_initiaux_2);
 		}
 		
+		// état de l'automate_1 suivant
 		it_initiaux_1 = iterateur_suivant_ensemble (it_initiaux_1);
 	}
 	
-	Table_iterateur it_nouv_etats = premier_iterateur_table (nouv_etats);
+	// construction de l'union de l'alphabet de l'automate_1 et de l'automate_2
 	Ensemble* nouv_alphabet = copier_ensemble(get_alphabet (automate_1));
 	ajouter_elements (nouv_alphabet, get_alphabet (automate_2));
+	
+	// On parcours la table qui associe les couples et leur numéro dans le mélange
+	// En calculant les transitions qui sortent des états pour chaque lettre de l'alphbaet construit
+	Table_iterateur it_nouv_etats = premier_iterateur_table (nouv_etats);
 	Ensemble_iterateur it_alphabet;
+	
+	int nb_nouv_etats_new = taille_table (nouv_etats);
+	int nb_nouv_etats_old = nb_nouv_etats_new;
 	
 	while (!iterateur_est_vide (it_nouv_etats)){
 		it_alphabet = premier_iterateur_ensemble (nouv_alphabet);
 		while (!iterateur_ensemble_est_vide (it_alphabet)) {
+			nb_nouv_etats_old = nb_nouv_etats_new;
+			
+			// Calcul des transitions à partir de l'état de l'automate_1 du couple
 			ajouter_transitions_melange (1, nouv_etats, automate_1, automate_2, it_nouv_etats, 
-											get_element (it_alphabet), id_etat++, mela);
-			ajouter_transitions_melange (2, nouv_etats, automate_1, automate_2, it_nouv_etats, 
-											get_element (it_alphabet), id_etat++, mela);
-			it_alphabet = iterateur_suivant_ensemble (it_alphabet);
+											get_element (it_alphabet), &id_etat, mela);
+			
+			
+			nb_nouv_etats_new = taille_table (nouv_etats);
+			
+			// Si l'opération n'a pas ajouter d'état on calcul les transitions à partir de l'état de l'automate_2
+			if (nb_nouv_etats_new == nb_nouv_etats_old) {
+				ajouter_transitions_melange (2, nouv_etats, automate_1, automate_2, it_nouv_etats, 
+												get_element (it_alphabet), &id_etat, mela);
+				nb_nouv_etats_new = taille_table (nouv_etats);
+			}
+			
+			// Si des états ont été ajoutés durant une des deux opérations précédentes
+			// Alors on recommence le parcours de la liste associative et de l'alphabet
+			// (au cas ou des couples auraient été ajoutés avant l'itérateur de la liste associative courant)
+			if (nb_nouv_etats_new > nb_nouv_etats_old) {
+				it_alphabet = premier_iterateur_ensemble (nouv_alphabet);
+				it_nouv_etats = premier_iterateur_table (nouv_etats);
+			}
+			else // Si aucun état n'a été ajouté on passe à la lettre suivante
+				it_alphabet = iterateur_suivant_ensemble (it_alphabet);
 		}
 		
+		// On passe à l'état suivant
 		it_nouv_etats = iterateur_suivant_table (it_nouv_etats);
 	}
 	
