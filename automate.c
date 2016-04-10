@@ -60,7 +60,6 @@ int get_min_etat( const Automate* automate ){
 	return min;
 }
 
-
 int comparer_cle(const Cle *a, const Cle *b) {
 	if( a->origine < b->origine )
 		return -1;
@@ -582,27 +581,31 @@ void action_ajout_transition_automate_accessible (int origine, char lettre, int 
 }
 
 Automate *automate_accessible( const Automate * automate ){
-	
+	// Récupération des états accessibles dans un automate depuis des états initiaux
 	Ensemble* ens_etats_accessible = accessibles (automate);
+	
+	// Les états finaux de l'automate accessible sont les états finaux accessible de automate
 	Ensemble* nouv_etats_finaux = creer_intersection_ensemble (ens_etats_accessible, get_finaux (automate));
 	
+	// Création du nouvel automate
 	Automate* nouv_automate = creer_automate ();
 	
+	// Les états accessibles de automate deviennent les états du nouvel automate
 	nouv_automate->etats = ens_etats_accessible;
+	
+	// Même états initiaux
 	nouv_automate->initiaux = copier_ensemble (get_initiaux (automate));
+	
+	// états finaux caculés précédemment
 	nouv_automate->finaux = nouv_etats_finaux;
 	
+	// On parcours toute les transitions de l'automate source, si la transition lie deux états équivalent dans le nouvel automate on l'ajoute a celui ci
 	pour_toute_transition (automate, action_ajout_transition_automate_accessible, nouv_automate);
 	
 	return nouv_automate;
 }
 
 Automate *miroir( const Automate * automate){
-	/* (Sur un site) il faut :
-	 *		- Inverser le sens des transitions ;
-	 * 		- Échanger les états initiaux et les états finals ;
-	 */
-
   Automate * res = creer_automate();
   res->etats = copier_ensemble (get_etats (automate));
   res->initiaux = copier_ensemble (get_finaux (automate));
@@ -630,23 +633,28 @@ Automate *miroir( const Automate * automate){
   return res;
 }
 
+/*
+ * On défini un couple de deux états,  
+ *   - aut1 = état de l'automate 1
+ *   - aut2 = état de l'automate 2
+*/
 struct My_couple_t { int aut1; int aut2; };   // On définit le couple
-
 typedef struct My_couple_t* My_couple;
 
+/*
+ * Définition des fonctions permettants de gérer une table associative.
+ */
 int my_comparer_couple( const intptr_t c1, const intptr_t c2 ){ 
 	if( ((My_couple) c1)->aut1 == ((My_couple) c2)->aut1 )
 		return ((My_couple) c1)->aut2 - ((My_couple) c2)->aut2;
 	return ((My_couple) c1)->aut1 - ((My_couple) c2)->aut1;
 }
- 
 intptr_t my_copier_couple( const intptr_t c ){
 	My_couple res = malloc( sizeof(My_couple) );
 	res->aut1 = ((My_couple) c)->aut1;
 	res->aut2 = ((My_couple) c)->aut2;
 	return (intptr_t) res;
 }
- 
 void my_supprimer_couple( intptr_t c ){
 	free( ((My_couple)c) );
 }
@@ -680,22 +688,23 @@ void ajouter_transitions_melange (
 	Ensemble* dest = delta1 (automate, etat_src, lettre);
 	liberer_automate (automate);
 	
-	// Parcours des automates de destination
+	// Parcours des états de destination
 	Ensemble_iterateur it_dest = premier_iterateur_ensemble (dest);
 	while(!iterateur_ensemble_est_vide (it_dest)){
 		
-		// Construction des nouveaux couple en fonction de l'état src choisi précédemment
+		// Construction des nouveaux couples en fonction de l'état src choisi précédemment :
+		// on remplace dans les nouveaux couple l'état source par les états de destination
 		My_couple c = malloc (sizeof (*c));
-		if (num_automate == 1){ // automate_1
+		if (num_automate == 1){ // état de l'automate_1 du couple
 			c->aut1 = get_element (it_dest);
 			c->aut2 = ((My_couple) get_element (it_nouv_etats))->aut2;
 		}
-		else{ // automate_2
+		else{ // état de l'automate_2 du couple
 			c->aut1 = ((My_couple) get_element (it_nouv_etats))->aut1;
 			c->aut2 = get_element (it_dest);
 		}
 		
-		// Si le couple n'est pas déjà associé à un sommet du mélange
+		// Si le couple n'est pas déjà associé à un sommet du mélange, on l'ajoute à la table assiciative
 		if (iterateur_est_vide (trouver_table (nouv_etats, (intptr_t) c))){
 			// Si les deux états sont finaux l'état associé du mélange est final
 			if (est_dans_l_ensemble (get_finaux (automate_1), c->aut1) && est_dans_l_ensemble (get_finaux (automate_2), c->aut2))
@@ -720,7 +729,10 @@ void ajouter_transitions_melange (
 Automate * creer_automate_du_melange(
 	const Automate* automate_1,  const Automate* automate_2
 ){
+	// Automate du mélange
 	Automate* mela = creer_automate();
+	
+	// Table associative qui associe un couple d'état de l'automate 1 et 2 à un nouvel état du mélange
 	Table* nouv_etats = creer_table(
 		my_comparer_couple, 
 		my_copier_couple, 
@@ -771,7 +783,7 @@ Automate * creer_automate_du_melange(
 	ajouter_elements (nouv_alphabet, get_alphabet (automate_2));
 	
 	// On parcours la table qui associe les couples et leur numéro dans le mélange
-	// En calculant les transitions qui sortent des états pour chaque lettre de l'alphbaet construit
+	// En calculant les transitions qui sortent des états pour chaque lettre de l'alphabet construit
 	Table_iterateur it_nouv_etats = premier_iterateur_table (nouv_etats);
 	Ensemble_iterateur it_alphabet;
 	

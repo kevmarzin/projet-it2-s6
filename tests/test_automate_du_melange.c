@@ -21,6 +21,10 @@
 
 #include "automate.h"
 #include "outils.h"
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 
 void wrap_liberer_automate( Automate * aut ){
 	if( aut ){
@@ -37,6 +41,17 @@ int test_automate_du_melange(){
 		Automate * aut2 = mot_to_automate("b");
 
 		Automate * mela = creer_automate_du_melange( aut1, aut2 );
+		
+		int fic = open("test.txt", O_WRONLY | O_TRUNC | O_CREAT, 0666);
+		
+		
+		dup2(1, fic);
+		print_automate (aut1);
+		print_automate (aut2);
+		print_automate (mela);
+		close (fic);
+		
+		
 		
 		TEST(
 			1
@@ -58,6 +73,7 @@ int test_automate_du_melange(){
 			&& ! le_mot_est_reconnu( mela, "bbb" )
 			, result
 		);
+		TEST(le_mot_est_reconnu( mela, "ba" ), result);
 		wrap_liberer_automate( aut1 );
 		wrap_liberer_automate( aut2 );
 		wrap_liberer_automate( mela );
