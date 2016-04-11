@@ -606,31 +606,42 @@ Automate *automate_accessible( const Automate * automate ){
 }
 
 Automate *miroir( const Automate * automate){
-  Automate * res = creer_automate();
-  res->etats = copier_ensemble (get_etats (automate));
-  res->initiaux = copier_ensemble (get_finaux (automate));
-  res->finaux = copier_ensemble (get_initiaux (automate));
-
-  Table_iterateur it;
-  for(
-      	it = premier_iterateur_table( automate->transitions );
-	! iterateur_est_vide( it );
-        it = iterateur_suivant_table( it )
-     ){
-    Table_iterateur it2;
-    	Cle * cle = (Cle*) get_cle( it );
-       	Ensemble * fins = (Ensemble*) get_valeur( it );
-	for(
-       	        it2 = premier_iterateur_ensemble( fins );
-       		! iterateur_ensemble_est_vide( it2 );
-       		it2 = iterateur_suivant_ensemble( it2 )
-       	){
-	  int fin = get_element( it2 );
-	  ajouter_transition( res, fin, cle->lettre, cle->origine );
-      }
-  }
+	Automate * res = creer_automate();
 	
-  return res;
+	// Le miroir a les mêmes états que l'automate source
+	res->etats = copier_ensemble (get_etats (automate));
+	
+	// On transforme les états finaux en initiaux
+	res->initiaux = copier_ensemble (get_finaux (automate));
+	
+	// On transforme les états initiaux en finaux
+	res->finaux = copier_ensemble (get_initiaux (automate));
+	
+	// On parcours la toutes les transitions de l'automate
+	Table_iterateur it;
+	for(it = premier_iterateur_table( automate->transitions );
+		! iterateur_est_vide( it );
+		it = iterateur_suivant_table( it )
+	){
+		Table_iterateur it2;
+		
+		// Récupération de l'état d'origine de la transition et de la lettre associée
+		Cle * cle = (Cle*) get_cle( it );
+		
+		// récupération des états de destination
+		Ensemble * dest = (Ensemble*) get_valeur( it );
+		
+		// On inverse les transitions récupérées
+		for(it2 = premier_iterateur_ensemble( dest );
+			! iterateur_ensemble_est_vide( it2 );
+			it2 = iterateur_suivant_ensemble( it2 )
+		){
+			int dest = get_element( it2 );
+			ajouter_transition( res, dest, cle->lettre, cle->origine );
+		}
+	}
+	
+	return res;
 }
 
 /*
